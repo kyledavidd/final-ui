@@ -143,7 +143,7 @@ function App() {
   return (
     <div className="app-container">
       <nav className="navbar">
-        <div className="navbar-title">Social Media App</div>
+        <div className="navbar-title">Faceboinks</div>
       </nav>
 
       <div className="app">
