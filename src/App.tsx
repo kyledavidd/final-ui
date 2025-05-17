@@ -161,7 +161,6 @@ function App() {
             placeholder="What's on your mind?"
             value={newPost.content}
             onChange={handleChange}
-            required
           />
           <input
             type="text"
