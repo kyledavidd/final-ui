@@ -12,7 +12,7 @@ type Post = {
   comments: string[];
 };
 
-const API_URL = 'http://localhost:8080/api/posts';
+const API_URL = 'https://final-api-sn9c.onrender.com/api/posts';
 
 function App() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -21,10 +21,19 @@ function App() {
   const [commentInput, setCommentInput] = useState<{ [key: number]: string }>({});
   const [showCommentBox, setShowCommentBox] = useState<{ [key: string]: boolean }>({});
   const [showMenu, setShowMenu] = useState<number | null>(null);
+  const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     fetchPosts();
+    const storedLikes = localStorage.getItem('likedPosts');
+    if (storedLikes) {
+      setLikedPosts(new Set(JSON.parse(storedLikes)));
+    }
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('likedPosts', JSON.stringify(Array.from(likedPosts)));
+  }, [likedPosts]);
 
   const fetchPosts = () => {
     fetch(API_URL)
@@ -96,9 +105,23 @@ function App() {
   };
 
   const handleLike = (id: number) => {
+    const alreadyLiked = likedPosts.has(id);
+
     setPosts(prev =>
-      prev.map(p => (p.id === id ? { ...p, likes: p.likes + 1 } : p))
+      prev.map(p =>
+        p.id === id ? { ...p, likes: alreadyLiked ? p.likes - 1 : p.likes + 1 } : p
+      )
     );
+
+    setLikedPosts(prev => {
+      const newSet = new Set(prev);
+      if (alreadyLiked) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
   };
 
   const handleCommentToggle = (id: number) => {
@@ -206,7 +229,7 @@ function App() {
 
               <div className="post-actions">
                 <div 
-                  className={`post-action ${post.likes > 0 ? 'liked' : ''}`}
+                  className={`post-action ${likedPosts.has(post.id) ? 'liked' : ''}`}
                   onClick={() => handleLike(post.id)}
                 >
                   Like ({post.likes})
