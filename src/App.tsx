@@ -187,10 +187,17 @@ function App() {
                 <div>
                   <strong>{post.author}</strong>
                   <div className="timestamp">
-                    {new Date(post.createdAt).toLocaleString()}
+                    {new Date(post.createdAt).toLocaleString('en-PH', {
+                      timeZone: 'Asia/Manila',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: 'numeric',
+                      minute: '2-digit',
+                      hour12: true,
+                    })}
                     {Math.abs(
-                      new Date(post.createdAt).getTime() -
-                      new Date(post.updatedAt).getTime()
+                      new Date(post.createdAt).getTime() - new Date(post.updatedAt).getTime()
                     ) > 1000 && ' (edited)'}
                   </div>
                 </div>
